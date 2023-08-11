@@ -44,6 +44,8 @@ public class SignUp_activity extends AppCompatActivity {
         userNationalID=findViewById(R.id.user_national_id);
         singUpBtn=findViewById(R.id.Signup_btn);
 
+        // new line git
+
 
         userProfile.setOnClickListener(new View.OnClickListener() {
             @Override
