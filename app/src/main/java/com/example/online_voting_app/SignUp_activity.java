@@ -17,13 +17,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+//import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignUp_activity extends AppCompatActivity {
-    private CircleImageView userProfile;
+//    private CircleImageView userProfile;
     private EditText userName,userPassword,userEmail,userNationalID;
     private Button singUpBtn;
-    private Uri mainUri=null;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -37,37 +43,71 @@ public class SignUp_activity extends AppCompatActivity {
             }
         });
 
-        userProfile=findViewById(R.id.profile_image);
+//        userProfile=findViewById(R.id.profile_image);
         userName=findViewById(R.id.user_name);
         userPassword=findViewById(R.id.user_password);
         userEmail=findViewById(R.id.user_email);
         userNationalID=findViewById(R.id.user_national_id);
         singUpBtn=findViewById(R.id.Signup_btn);
 
+        mAuth=FirebaseAuth.getInstance();
 
-        userProfile.setOnClickListener(new View.OnClickListener() {
+//        userProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+//
+//                    if(ContextCompat.checkSelfPermission(SignUp_activity.this,
+//                            Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+//
+//                        ActivityCompat.requestPermissions(SignUp_activity.this,
+//                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},1);
+//                    }else {
+//                        cropImage();
+//                    }
+//                }else {
+//                    cropImage();
+//                }
+//            }
+//        });
+        singUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                String name= userName.getText().toString().trim();
+                String password= userPassword.getText().toString().trim();
+                String email= userEmail.getText().toString().trim();
+                String nationalId= userNationalID.getText().toString().trim();
 
-                    if(ContextCompat.checkSelfPermission(SignUp_activity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-
-                        ActivityCompat.requestPermissions(SignUp_activity.this,
-                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},1);
-                    }else {
-                        cropImage();
-                    }
+                if(!TextUtils.isEmpty(name)&&!TextUtils.isEmpty(password)&&!TextUtils.isEmpty(email)&&
+                        Patterns.EMAIL_ADDRESS.matcher(email).matches()&&!TextUtils.isEmpty(nationalId)){
+                    createuser(email,password);
                 }else {
-                    cropImage();
+                    Toast.makeText(SignUp_activity.this, " Please enter your credentials ", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
 
-}
+    private void createuser(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-    private void cropImage() {
+                if(task.isSuccessful()){
+                    Toast.makeText(SignUp_activity.this, "User created", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(SignUp_activity.this, "Fail try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(SignUp_activity.this, "Some thing went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-
-      }
+//    private void cropImage() {
+//
+//      }
     }
