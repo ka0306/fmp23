@@ -60,6 +60,7 @@
             Image Cropper fill the remaining available height
 
 
+
             <EditText
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"

@@ -40,7 +40,7 @@ public class SignUp_activity extends AppCompatActivity {
     public static final String Password="passwordKey";
     public static final String NationalId="nationalIdKey";
 
-    public static final String Image="imageKey";
+//    public static final String Image="imageKey";
 
     SharedPreferences sharedPreferences;
     String name,password,email,nationalId;
@@ -51,7 +51,7 @@ public class SignUp_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        sharedPreferences= getApplicationContext().getSharedPreferences(PREFERENCE,MODE_PRIVATE);
+        sharedPreferences = getApplicationContext().getSharedPreferences(PREFERENCE,MODE_PRIVATE);
         findViewById(R.id.have_acc).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +111,7 @@ public class SignUp_activity extends AppCompatActivity {
            if(task.isSuccessful()){
                Toast.makeText(SignUp_activity.this, " User created", Toast.LENGTH_SHORT).show();
                verifyEmail();
+
            }else{
                Toast.makeText(SignUp_activity.this, "Fail Try again", Toast.LENGTH_SHORT).show();
            }
@@ -131,6 +132,7 @@ public class SignUp_activity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
 
                     if(task.isSuccessful()){
+
                         SharedPreferences.Editor pref =sharedPreferences.edit();
                         pref.putString(Name,name);
                         pref.putString(Password,password);
@@ -141,22 +143,19 @@ public class SignUp_activity extends AppCompatActivity {
 
 //                        email send
                         Toast.makeText(SignUp_activity.this, "Email Send", Toast.LENGTH_SHORT).show();
+
                         FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(SignUp_activity.this, login_activity.class));
-                        finish();
 
                     }else{
                         mAuth.signOut();
-                        finish();
                     }
+                    finish();
                 }
             });
-
         }
     }
-
     private void cropImage() {
-
 
       }
     }

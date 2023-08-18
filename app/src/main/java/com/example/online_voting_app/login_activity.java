@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ForgetPasswordActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -39,6 +40,8 @@ public class login_activity extends AppCompatActivity {
     public static final String Password="passwordKey";
     public static final String NationalId="nationalIdKey";
     public static final String Image="imageKey";
+    public static final String UploadData="uploaddata";
+
     SharedPreferences sharedPreferences;
     StorageReference reference;
     FirebaseFirestore firebaseFirestore;
@@ -81,11 +84,25 @@ public class login_activity extends AppCompatActivity {
             }
 
         });
+        forgetPassword.findViewById(R.id.forget_password).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             startActivity(new Intent(login_activity.this, ForgetPasswordActivity.class));
+            }
+        });
     }
     private void verifyEmail() {
+
         FirebaseUser user=mAuth.getCurrentUser();
         assert user != null;
         if(user.isEmailVerified()){
+
+      boolean bol = sharedPreferences.getBoolean(UploadData,false);
+      if (bol){
+          startActivity(new Intent(login_activity.this, HomeActivity.class));
+          finish();
+
+      }else {
 
             String name=sharedPreferences.getString(Name,null);
             String password=sharedPreferences.getString(Password,null);
@@ -110,7 +127,7 @@ public class login_activity extends AppCompatActivity {
                                    map.put("email", email);
                                    map.put("password", password);
                                    map.put("nationalId", nationalId);
-                                   map.put("image", uri.toString());
+//                                   map.put("image", uri.toString());
                                    map.put("uid", uid);
                                    firebaseFirestore.collection("users")
                                            .document(uid)
@@ -119,6 +136,10 @@ public class login_activity extends AppCompatActivity {
                                                @Override
                                                public void onComplete(@NonNull Task<Void> task) {
                                                    if (task.isSuccessful()) {
+                                                       sharedPreferences= getApplicationContext().getSharedPreferences(PREFERENCE,MODE_PRIVATE);
+                                                       SharedPreferences.Editor pref =sharedPreferences.edit();
+                                                       pref.putString(UploadData, String.valueOf(true));
+                                                       pref.apply();
 
                              startActivity(new Intent(login_activity.this, HomeActivity.class));
                                 finish();
@@ -136,7 +157,10 @@ public class login_activity extends AppCompatActivity {
            }
         }
          });
+           }else {
+               Toast.makeText(login_activity.this, "User data not found", Toast.LENGTH_SHORT).show();
            }
+        }
         }else{
             mAuth.signOut();
             Toast.makeText(this, "Please Verify your Email", Toast.LENGTH_SHORT).show();
